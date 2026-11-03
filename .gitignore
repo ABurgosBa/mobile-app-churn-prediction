@@ -57,5 +57,5 @@ env/
 .DS_Store
 Thumbs.db
 
-# En la siguiente fase se revisaran por separado los resultados
-# agregados e imagenes que puedan publicarse sin riesgos.
+# Archivos de configuración de Windows
+desktop.ini
