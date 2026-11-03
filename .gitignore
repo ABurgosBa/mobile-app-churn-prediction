@@ -12,7 +12,6 @@
 /test/
 /resultados/
 /modelos/
-/evidencias/
 
 # Ficheros de datos, predicciones y modelos, independientemente de la carpeta
 *.csv
