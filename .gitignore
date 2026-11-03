@@ -1,0 +1,58 @@
+# Proyecto Churn - exclusion preventiva de archivos antes de publicar.
+# IMPORTANTE: .gitignore no elimina archivos ya publicados en Git.
+# Antes de subir notebooks, revisar celdas y salidas con datos personales.
+
+# Datos originales, derivados y otros archivos por revisar
+/datos/
+/data/
+/Dataset/
+/raw_dump/
+/usage_data/
+/train/
+/test/
+/resultados/
+/modelos/
+/evidencias/
+
+# Ficheros de datos, predicciones y modelos, independientemente de la carpeta
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.pkl
+*.pickle
+*.joblib
+*.sqlite
+*.sqlite3
+*.db
+*.zip
+*.7z
+*.rar
+*.log
+**/full-anonymized-data.txt
+
+# Archivos temporales de Jupyter y Python
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Entornos, claves y configuraciones locales
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# En la siguiente fase se revisaran por separado los resultados
+# agregados e imagenes que puedan publicarse sin riesgos.
