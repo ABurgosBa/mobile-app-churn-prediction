@@ -1,69 +1,191 @@
 # Predicción del abandono de usuarios (churn) en aplicaciones móviles
 
-Proyecto académico desarrollado en el marco del **Máster Universitario en Inteligencia Artificial Aplicada a Entornos Empresariales y Financieros** de la Universidad Internacional de Andalucía (UNIA).
+Proyecto desarrollado en el marco del **Máster Universitario en Inteligencia Artificial Aplicada a Entornos Empresariales y Financieros**, de la Universidad Internacional de Andalucía (UNIA).
 
-## Objetivo
+## 1. Presentación del proyecto
 
-Analizar si la actividad registrada durante distintos periodos de observación permite clasificar a los usuarios según la etiqueta de abandono (*churn*) proporcionada por el conjunto de datos. Se comparan diferentes algoritmos y cantidades de historial disponible, prestando atención tanto a la calidad de la clasificación como a la interpretación de los resultados.
+Este trabajo analiza la posibilidad de identificar patrones de abandono (*churn*) en usuarios de aplicaciones móviles a partir de sus registros de actividad.
 
-## Datos y alcance
+El estudio parte de un conjunto de datos que recoge el comportamiento diario de 65.005 usuarios durante un periodo máximo de 90 días. A partir de esta información se construyen variables que permiten estudiar la frecuencia de uso, la intensidad de la actividad, la recencia y su evolución a lo largo del tiempo.
 
-- **Usuarios:** 65.005.
+El objetivo es comparar diferentes modelos de clasificación y determinar hasta qué punto la cantidad de historial disponible influye en su rendimiento. También se consideran aspectos como la interpretación de los resultados, la complejidad de los modelos y su posible utilidad para la gestión de la retención de usuarios.
+
+El repositorio contiene el código utilizado durante el estudio, la documentación del entorno de trabajo y las principales evidencias gráficas de los resultados.
+
+## 2. Datos utilizados
+
+El análisis se realizó sobre un conjunto de datos con las siguientes características:
+
+- **Usuarios totales:** 65.005.
 - **Conjunto de entrenamiento:** 52.004 usuarios.
 - **Conjunto de prueba:** 13.001 usuarios.
-- **Prevalencia aproximada de churn:** 23 %.
-- **Actividad:** registros diarios organizados en 12 secuencias de uso por usuario, con un máximo de 90 días de historial.
-- **Variables predictoras finales:** 176 por usuario, construidas a partir de indicadores de actividad, recencia, frecuencia, intensidad y evolución temporal.
-- **Ventanas de observación comparadas:** 30, 60 y 90 días.
+- **Proporción de usuarios etiquetados como churn:** aproximadamente el 23 %.
+- **Periodo máximo de actividad registrado:** 90 días.
+- **Perfiles de actividad:** 12 secuencias diarias por usuario.
+- **Variables predictoras finales:** 176.
+- **Ventanas de observación estudiadas:** 30, 60 y 90 días.
 
-**Limitación temporal importante:** la documentación disponible no permite determinar con certeza la fecha de definición de la etiqueta *churn* ni su relación cronológica exacta con los registros de actividad. Por ello, las ventanas de 30, 60 y 90 días indican **cantidad de historial utilizada**, no horizontes de predicción anticipada demostrados. Los resultados deben interpretarse como capacidad para clasificar la etiqueta facilitada, sin afirmar una anticipación temporal del abandono.
+Los registros originales se transformaron en una matriz de características, con una fila por usuario y variables que resumen distintos aspectos de su comportamiento.
 
-## Metodología
+Esta transformación permite utilizar modelos de clasificación convencionales sin perder por completo la información sobre cómo evoluciona la actividad durante el periodo observado.
 
-Se emplean técnicas de preparación de datos, ingeniería de características y evaluación supervisada. El análisis contempla un clasificador de referencia, regresión logística con regularización L2, regresión logística con pesos de clase equilibrados, árbol de decisión, *Random Forest* y XGBoost.
+### Limitación temporal de los datos
 
-Durante el desarrollo se utilizaron particiones de entrenamiento y prueba y validación cruzada estratificada. Se examinaron métricas adecuadas para una clasificación con clases de distinto tamaño, entre ellas precisión, exhaustividad (*recall*), F1, F2, AUC-ROC, área bajo la curva precisión-recall (*average precision*), Brier score y *log loss*.
+La documentación disponible no permite establecer con certeza cuándo se definió la etiqueta de abandono ni su relación temporal exacta con los registros de actividad.
 
-La comparación de ventanas de observación permitió seleccionar una solución de menor complejidad que otras alternativas evaluadas, de acuerdo con los criterios de rendimiento establecidos en el estudio.
+Por esta razón, las ventanas de 30, 60 y 90 días representan distintas cantidades de historial disponible, pero no permiten determinar con cuánta antelación podría predecirse el abandono.
 
-## Modelo seleccionado y resultados documentados
+Los resultados deben interpretarse como la capacidad de los modelos para clasificar a los usuarios según la etiqueta proporcionada por el conjunto de datos, sin atribuirles una capacidad de predicción temprana que no ha podido comprobarse.
 
-El modelo final documentado es una **regresión logística L2**, precedida de estandarización de variables, que utiliza **60 días de historial**, **176 predictores** y un **umbral de decisión de 0,20**.
+## 3. Metodología
 
-Resultados registrados para el conjunto de prueba de 13.001 usuarios:
+El estudio se desarrolló siguiendo un proceso de preparación de datos, análisis exploratorio, construcción de variables, entrenamiento y evaluación de modelos.
 
-| Métrica | Valor |
+### Preparación de datos y construcción de variables
+
+A partir de las secuencias de actividad diaria se elaboraron indicadores para representar distintos aspectos del comportamiento de los usuarios:
+
+- **Frecuencia:** regularidad con la que se registra actividad.
+- **Intensidad:** volumen de actividad acumulada durante el periodo observado.
+- **Recencia:** tiempo transcurrido desde la última actividad registrada.
+- **Evolución temporal:** cambios en el comportamiento a lo largo del periodo.
+- **Tendencia:** dirección e intensidad de las variaciones de actividad.
+
+El conjunto definitivo quedó formado por 176 variables predictoras por usuario.
+
+Para comparar la influencia de la cantidad de información disponible, se construyeron representaciones correspondientes a los primeros 30, 60 y 90 días de actividad.
+
+### Modelos evaluados
+
+Se estudiaron diferentes algoritmos de clasificación supervisada:
+
+1. Clasificador de referencia (*Dummy Classifier*).
+2. Regresión logística con regularización L2.
+3. Regresión logística con ponderación equilibrada de clases.
+4. Árbol de decisión.
+5. Random Forest.
+6. XGBoost.
+
+La comparación permitió analizar alternativas con distintos niveles de complejidad e interpretabilidad.
+
+### Validación y evaluación
+
+Durante el desarrollo se utilizaron particiones diferenciadas de entrenamiento y prueba, junto con validación cruzada estratificada de cinco pliegues.
+
+Para evaluar los modelos se consideraron distintas métricas, ya que el porcentaje de usuarios clasificados como churn es inferior al de aquellos que permanecen activos.
+
+Las principales métricas utilizadas fueron:
+
+- **Precision:** proporción de predicciones positivas que corresponden realmente a usuarios churn.
+- **Recall:** proporción de usuarios churn identificados correctamente.
+- **F1 y F2:** medidas que combinan precisión y recall, dando F2 mayor importancia a la detección de la clase positiva.
+- **AUC-ROC:** capacidad del modelo para distinguir entre las dos clases.
+- **Average Precision (AP):** resumen del comportamiento de la curva precisión-recall.
+- **Brier score y log loss:** medidas de calidad de las probabilidades estimadas.
+
+También se examinaron la matriz de confusión, la calibración de las probabilidades y el efecto del umbral utilizado para clasificar a los usuarios.
+
+## 4. Modelo seleccionado y resultados
+
+El modelo finalmente seleccionado fue una **regresión logística con regularización L2**, precedida de una etapa de estandarización de las variables.
+
+Sus principales características son:
+
+- **Historial utilizado:** 60 días.
+- **Número de predictores:** 176.
+- **Umbral de clasificación:** 0,20.
+- **Algoritmo:** regresión logística L2.
+
+La elección se basó en el equilibrio entre rendimiento, sencillez e información necesaria. Aunque algunas alternativas alcanzaron resultados ligeramente superiores, la regresión logística con 60 días de historial ofreció un rendimiento comparable utilizando menos información temporal.
+
+### Resultados en el conjunto de prueba
+
+La evaluación documentada del modelo seleccionado, sobre 13.001 usuarios, produjo los siguientes resultados:
+
+| Métrica | Resultado |
 |---|---:|
-| Average precision (AP) | 0,998693 |
+| Average Precision (AP) | 0,998693 |
 | AUC-ROC | 0,999578 |
-| Precisión | 0,970472 |
+| Precision | 0,970472 |
 | Recall | 0,993284 |
 | F1 | 0,981746 |
 | F2 | 0,988636 |
 | Brier score | 0,005045 |
 | Log loss | 0,019732 |
 
-Matriz de confusión registrada: **VN = 9.933, FP = 90, FN = 20, VP = 2.958**.
+La matriz de confusión registró:
 
-**Interpretación y cautelas:** estas métricas corresponden al protocolo y los datos utilizados en el proyecto. No constituyen por sí mismas evidencia de funcionamiento en producción, generalización a otras aplicaciones o predicción temprana del abandono. El conjunto de prueba fue consultado durante fases históricas del trabajo, por lo que no debe presentarse como una evaluación externa completamente independiente e intocada durante todo el desarrollo.
+| Resultado | Usuarios |
+|---|---:|
+| Verdaderos negativos | 9.933 |
+| Falsos positivos | 90 |
+| Falsos negativos | 20 |
+| Verdaderos positivos | 2.958 |
 
-## Organización de los cuadernos
+Estos valores reflejan una elevada capacidad de clasificación sobre el conjunto de datos estudiado. Sin embargo, no permiten asegurar que el modelo mantenga el mismo comportamiento en otras aplicaciones o con nuevos usuarios.
 
-Los cinco primeros notebooks forman el flujo de trabajo principal, en este orden:
+Debe tenerse en cuenta, además, que el conjunto de prueba fue consultado durante fases anteriores del desarrollo. Por tanto, sus resultados no deben presentarse como una evaluación completamente independiente de todas las decisiones tomadas durante el estudio.
 
-1. `notebooks/01_auditoria_dataset.ipynb`: auditoría inicial del conjunto de datos.
-2. `notebooks/02_preparacion_dataset.ipynb`: preparación de datos y construcción de variables.
-3. `notebooks/03_analisis_exploratorio.ipynb`: análisis exploratorio.
-4. `notebooks/04_modelado.ipynb`: desarrollo, comparación y evaluación de modelos; incluye la reconstrucción de ventanas de 30 y 60 días.
-5. `notebooks/05_sintesis_final.ipynb`: síntesis de resultados.
+## 5. Evidencias gráficas
 
-El notebook `notebooks/06_verificacion_independiente.ipynb` se incorporó después como **comprobación complementaria**. No forma parte del proceso original de desarrollo y selección del modelo.
+El repositorio incluye siete figuras que recogen los principales resultados de la evaluación y facilitan su interpretación.
 
-## Entorno de ejecución
+### Evaluación del modelo final
 
-El proyecto se desarrolló utilizando Python y JupyterLab en Windows, dentro del entorno Conda `churn_tfm`. Las versiones **presentes en el entorno al preparar esta publicación** están registradas en [`environment.yml`](environment.yml). No se ha acreditado que todas coincidan con las que había instaladas en cada fase histórica del desarrollo.
+- [Matriz de confusión](evidencias/figura_matriz_confusion_test_60d.png): distribución de los aciertos y errores de clasificación.
+- [Curva ROC](evidencias/figura_curva_roc_test_60d.png): capacidad del modelo para distinguir entre usuarios churn y no churn.
+- [Curva precisión-recall](evidencias/figura_curva_precision_recall_test_60d.png): comportamiento de la precisión y el recall para distintos umbrales.
+- [Curva de calibración](evidencias/figura_calibracion_test_60d.png): relación entre las probabilidades estimadas y la frecuencia observada de abandono.
+- [Captura acumulada de churn](evidencias/figura_captura_acumulada_test_60d.png): concentración de los usuarios churn al ordenarlos según el riesgo estimado.
 
-Para crear un entorno a partir del archivo **en Windows** (con Conda o Miniconda instalado), abre una terminal en la carpeta raíz del repositorio y ejecuta:
+### Comparación e interpretación
+
+- [Comparación entre modelos y ventanas de observación](evidencias/figura_comparacion_ventanas_modelos.png): resultados de las alternativas evaluadas con 30, 60 y 90 días de historial.
+- [Coeficientes principales del modelo](evidencias/figura_coeficientes_principales_60d.png): variables con mayor peso en la regresión logística seleccionada.
+
+Las figuras corresponden a los resultados obtenidos durante el desarrollo original. No proceden de una nueva ejecución realizada para preparar este repositorio.
+
+Los coeficientes permiten interpretar asociaciones entre las variables y la clasificación estimada, pero no deben considerarse pruebas de relaciones causales.
+
+## 6. Organización del proyecto
+
+El estudio se desarrolló inicialmente en cinco notebooks, organizados según las distintas etapas del análisis.
+
+| Notebook | Contenido |
+|---|---|
+| [01_auditoria_dataset.ipynb](notebooks/01_auditoria_dataset.ipynb) | Revisión inicial del conjunto de datos, estructura y comprobaciones de calidad. |
+| [02_preparacion_dataset.ipynb](notebooks/02_preparacion_dataset.ipynb) | Preparación de los registros y construcción de las variables predictoras. |
+| [03_analisis_exploratorio.ipynb](notebooks/03_analisis_exploratorio.ipynb) | Análisis descriptivo y exploración de los patrones de actividad. |
+| [04_modelado.ipynb](notebooks/04_modelado.ipynb) | Entrenamiento, comparación y evaluación de modelos, incluida la reconstrucción de las ventanas de 30 y 60 días. |
+| [05_sintesis_final.ipynb](notebooks/05_sintesis_final.ipynb) | Recopilación e interpretación de los resultados finales. |
+
+Posteriormente se incorporó un sexto notebook:
+
+**[06_verificacion_independiente.ipynb](notebooks/06_verificacion_independiente.ipynb)**
+
+Este cuaderno realiza comprobaciones complementarias sobre la consistencia de los resultados y las predicciones de los modelos evaluados con 60 días de historial. Se elaboró después de finalizar el desarrollo principal y no intervino en la selección original del modelo.
+
+## 7. Entorno de trabajo
+
+El proyecto se desarrolló en Windows, utilizando Python, JupyterLab y un entorno de Conda denominado `churn_tfm`.
+
+Las principales herramientas empleadas fueron:
+
+- Python.
+- Pandas y NumPy.
+- Scikit-learn.
+- XGBoost.
+- Matplotlib.
+- Joblib.
+- JupyterLab.
+
+El archivo [environment.yml](environment.yml) recoge las versiones instaladas en el entorno al preparar el repositorio. Estas pueden diferir de las utilizadas durante algunas fases anteriores del desarrollo.
+
+### Instalación del entorno
+
+Para preparar el entorno en Windows es necesario disponer previamente de Conda o Miniconda.
+
+Desde una terminal situada en la carpeta principal del repositorio, se pueden ejecutar los siguientes comandos:
 
 ```bash
 conda env create -f environment.yml
@@ -71,42 +193,97 @@ conda activate churn_tfm
 jupyter lab
 ```
 
-### Qué se necesita para ejecutar los notebooks
+El archivo de configuración facilita la instalación de las dependencias, aunque no garantiza por sí solo que el estudio pueda reproducirse íntegramente en cualquier equipo.
 
-Este repositorio es una **publicación del código y de los resultados agregados documentados, no un paquete de reproducción autónoma**. Los archivos de datos originales, los artefactos de entrenamiento, las predicciones por cliente y los modelos serializados no se incluyen en la versión pública.
+## 8. Datos y ejecución de los notebooks
 
-El código espera esta estructura, si se dispone legítimamente de los datos de origen:
+El repositorio reúne el código desarrollado durante el estudio, los resultados documentados y sus principales evidencias gráficas.
+
+No incluye los datos originales, los archivos intermedios de procesamiento, las predicciones individuales ni los modelos guardados. Por este motivo, aunque permite examinar la metodología y los procedimientos utilizados, la reproducción completa del análisis requiere disponer de los datos de origen y generar los archivos necesarios durante la ejecución de los notebooks.
+
+### Estructura de carpetas
+
+Para ejecutar el proyecto con los datos originales, se necesita una organización de archivos como la siguiente:
 
 ```text
-Proyecto_Churn_GitHub/
-├── notebooks/              # Seis notebooks publicados
+mobile-app-churn-prediction/
+│
+├── notebooks/
+│   ├── 01_auditoria_dataset.ipynb
+│   ├── 02_preparacion_dataset.ipynb
+│   ├── 03_analisis_exploratorio.ipynb
+│   ├── 04_modelado.ipynb
+│   ├── 05_sintesis_final.ipynb
+│   └── 06_verificacion_independiente.ipynb
+│
+├── evidencias/
+│   └── (7 figuras del estudio)
+│
 ├── datos/
 │   └── Dataset/
 │       ├── main.csv
-│       ├── train/train_cxid.csv
-│       ├── test/test_cxid.csv
-│       ├── usage_data/     # Los 12 CSV de perfiles de uso
-│       └── raw_dump/full-anonymized-data.txt
-├── resultados/             # Archivos intermedios generados; no publicados
-├── modelos/                # Modelos serializados; no publicados
-└── evidencias/             # Figuras y evidencias generadas; no publicadas
+│       ├── train/
+│       │   └── train_cxid.csv
+│       ├── test/
+│       │   └── test_cxid.csv
+│       ├── usage_data/
+│       │   └── (12 archivos CSV de actividad)
+│       └── raw_dump/
+│           └── full-anonymized-data.txt
+│
+├── resultados/
+├── modelos/
+│
+├── README.md
+├── environment.yml
+└── .gitignore
 ```
 
-Las carpetas `datos`, `resultados`, `modelos` y `evidencias` están excluidas mediante `.gitignore`, por lo que **no aparecerán tras clonar el repositorio**. Cuando se disponga de los datos autorizados, hay que crear esas carpetas antes de ejecutar el flujo; el notebook 02 necesita que `resultados` exista para guardar sus primeros archivos.
+Las carpetas `datos`, `resultados` y `modelos` están excluidas de GitHub mediante `.gitignore`. La carpeta `evidencias`, en cambio, contiene las siete figuras que acompañan a la documentación del estudio.
 
-Para ejecutar desde JupyterLab, inicia `jupyter lab` en la raíz del repositorio, abre los cuadernos desde la carpeta `notebooks/` y ejecútalos allí, en orden: `01` → `02` → `03` → `04` → `05`. Los notebooks 01 y 02 calculan la raíz del proyecto a partir del directorio de trabajo de Jupyter, que debe ser `notebooks/`. El notebook 06 es una auditoría posterior y **requiere además los resultados, checkpoints y el modelo final generados previamente**.
+### Orden de ejecución
 
-En la copia publicable de `04_modelado.ipynb` se ha convertido en una nota la celda que ejecutaba `%pip install xgboost-cpu`: esa dependencia ya está incluida en `environment.yml`. Es un ajuste de instalación; **no se han cambiado los algoritmos, parámetros, datos ni resultados del análisis**.
+Los cinco primeros notebooks deben ejecutarse en el siguiente orden:
 
-Los notebooks se publican **sin salidas de ejecución** para evitar difundir datos individuales. Las conclusiones escritas en celdas Markdown reflejan los resultados del estudio original y no una nueva ejecución del código sobre los archivos aquí publicados. No se ha comprobado la reproducción íntegra del estudio a partir de esta copia pública.
+1. `01_auditoria_dataset.ipynb`
+2. `02_preparacion_dataset.ipynb`
+3. `03_analisis_exploratorio.ipynb`
+4. `04_modelado.ipynb`
+5. `05_sintesis_final.ipynb`
 
-## Disponibilidad de datos y archivos
+Para ello, se debe iniciar JupyterLab desde la carpeta principal del proyecto y abrir los cuadernos dentro de `notebooks`. Algunas instrucciones utilizan rutas relativas al directorio de trabajo, por lo que deben ejecutarse desde esa ubicación.
 
-Los archivos originales de datos no se publican automáticamente en este repositorio: primero debe comprobarse que su licencia o autorización permite la redistribución. Tampoco deben publicarse identificadores de usuarios, predicciones individuales, credenciales, rutas personales, archivos intermedios pesados ni información confidencial.
+Antes de comenzar, es necesario disponer de los archivos de datos en las rutas correspondientes y crear las carpetas destinadas a los resultados y modelos. En particular, el notebook 02 necesita que exista la carpeta `resultados`.
 
-La publicación de los notebooks, figuras, resultados agregados y modelos guardados está sujeta a una revisión previa para descartar información individual o sensible y para verificar los permisos aplicables. La ausencia de datos originales puede limitar la reproducción completa del procesamiento y del entrenamiento.
+El notebook 06 se ejecuta por separado, una vez disponibles los archivos generados durante las etapas anteriores. Su funcionamiento también requiere determinados resultados intermedios y el modelo final guardado.
 
-## Uso académico
+Los cuadernos publicados no incluyen salidas de ejecución. Esta decisión permite compartir el código sin incorporar accidentalmente datos individuales o resultados detallados por usuario.
 
-Este repositorio documenta un estudio de clasificación de *churn* basado en un conjunto de datos específico. Las asociaciones identificadas entre actividad y etiqueta no deben interpretarse como relaciones causales. Antes de aplicar cualquier resultado a decisiones reales de retención sería necesario validar las definiciones temporales, comprobar la generalización y revisar las implicaciones de privacidad y uso legítimo de los datos.
+La reproducción completa del estudio a partir de esta versión del repositorio no ha sido comprobada.
+
+## 9. Disponibilidad de los datos y limitaciones
+
+Los datos originales no se distribuyen con el repositorio. Antes de compartirlos sería necesario verificar las condiciones de uso y los permisos correspondientes.
+
+También se han excluido las predicciones individuales, los modelos serializados y los archivos intermedios generados durante el procesamiento y entrenamiento.
+
+Estas restricciones no impiden consultar el código, conocer las decisiones metodológicas o examinar los resultados y figuras publicados. Sin embargo, limitan la posibilidad de repetir el análisis completo sin disponer previamente de los archivos originales.
+
+El estudio presenta, además, algunas limitaciones que deben tenerse en cuenta al interpretar los resultados:
+
+- La definición temporal de la etiqueta churn no está suficientemente documentada.
+- No puede demostrarse con qué antelación se identifica el abandono.
+- El conjunto de prueba fue consultado durante el desarrollo, por lo que su evaluación debe interpretarse teniendo en cuenta esta circunstancia.
+- Los resultados corresponden al conjunto de datos analizado y no garantizan el mismo rendimiento en otras aplicaciones.
+- Las relaciones observadas entre las variables de actividad y el abandono no implican causalidad.
+
+## 10. Consideraciones finales
+
+El estudio muestra que los registros de actividad pueden aportar información útil para distinguir entre usuarios con diferentes patrones de permanencia y abandono.
+
+Los resultados también ponen de manifiesto que un modelo relativamente sencillo, como la regresión logística con regularización L2, puede alcanzar un rendimiento comparable al de alternativas más complejas cuando se dispone de variables adecuadas.
+
+No obstante, su posible aplicación a situaciones reales requeriría comprobar cómo se define temporalmente el abandono, evaluar el comportamiento del modelo con nuevos usuarios y garantizar un tratamiento adecuado de los datos.
+
+Este repositorio permite consultar el desarrollo técnico del trabajo y sus principales resultados, dejando constancia tanto de las decisiones adoptadas como de las limitaciones que condicionan su interpretación.
 
