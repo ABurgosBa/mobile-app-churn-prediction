@@ -15,6 +15,10 @@
 
 # Ficheros de datos, predicciones y modelos, independientemente de la carpeta
 *.csv
+!resultados_agregados/
+!resultados_agregados/modelado_metricas_test_externo_60d.csv
+!resultados_agregados/modelado_resumen_cv_modelos.csv
+!resultados_agregados/modelado_comparacion_temporal_oof.csv
 *.tsv
 *.xlsx
 *.xls
