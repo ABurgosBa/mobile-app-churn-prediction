@@ -147,6 +147,16 @@ Las figuras corresponden a los resultados obtenidos durante el desarrollo origin
 
 Los coeficientes permiten interpretar asociaciones entre las variables y la clasificación estimada, pero no deben considerarse pruebas de relaciones causales.
 
+### Resultados numéricos agregados
+
+Además de las figuras, se incluyen tres archivos CSV con los principales resultados de evaluación y comparación de modelos:
+
+- [Métricas del modelo final](resultados_agregados/modelado_metricas_test_externo_60d.csv): resultados de la regresión logística L2 con 60 días de historial sobre el conjunto de prueba.
+- [Comparación de modelos mediante validación cruzada](resultados_agregados/modelado_resumen_cv_modelos.csv): resumen de las métricas obtenidas por los seis modelos evaluados.
+- [Comparación de ventanas de observación](resultados_agregados/modelado_comparacion_temporal_oof.csv): resultados de la comparación de modelos con 30, 60 y 90 días de historial.
+
+Estos archivos permiten consultar las métricas utilizadas para comparar las alternativas y justificar la selección del modelo final. No incluyen registros ni predicciones individuales de usuarios.
+
 ## 6. Organización del proyecto
 
 El estudio se desarrolló inicialmente en cinco notebooks, organizados según las distintas etapas del análisis.
